@@ -1,51 +1,34 @@
-board = list(range(1, 10))
-
-def make_board(board):
-    print("-" * 13)
-    for i in range(3):
-        print("|", board[0+i*3], "|", board[1+i*3], "|", board[2+i*3], "|")
-        print("-" * 13)
-
-
-def take_item(player_item):
-        p_answer = int(input("Выберите клетку для " + player_item + "?"))
-        if p_answer >= 1 and p_answer <= 9:
-            if (str(board[p_answer-1]) not in "XO"):
-                board[p_answer-1] = player_item
-            else:
-                print("Эта клетка занята")
+from random import randint
+board = []
+for x in range(6):
+    board.append(["O"] * 6)
+def print_board(board):
+    for row in board:
+        print((" ").join(row)) #создаётся игровое поле
+def random_row(board):
+    return randint(0, len(board) - 1) #фунцкия загадывания корабля по строке
+def random_col(board):
+    return randint(0, len(board[0]) - 1) #фунцкия загадывания корабля по столбцу
+print("Начнем игру в Морской бой!")
+print_board(board)
+ship_row = random_row(board) #загадываем корабль по строке
+ship_col = random_col(board) #загадываем корабль по столбцу
+for turn in range(10): #10 попыток
+    print ("Ход: ", turn)
+    guess_row = int(input("Строка 0-5:")) #ввод строки
+    guess_col = int(input("Столбец 0-5:")) #ввод столбца
+    if guess_row == ship_row and guess_col == ship_col: #если попал
+        print("Поздравляю, ты потопил мой корабль!")
+        break
+    else:
+        if (guess_row < 0 or guess_row > 5) or (guess_col < 0 or guess_col > 5): #если мимо игрового поля
+            print("Oops, эти координаты не в нашем океане.")
+        elif(board[guess_row][guess_col] == "X"): #если назвал повторно координаты
+            print("Эти координаты вы уже называли.")
         else:
-            print("Попробуйте ещё раз.")
-
-
-def check(board):
-    win_board = ((0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7), (2, 5, 8), (0, 4, 8), (2, 4, 6))
-    for a in win_board:
-        if board[a[0]] == board[a[1]] == board[a[2]]:
-            return board[a[0]]
-    return False
-
-
-def main_def(board):
-    counter = 0
-    c = False
-    while not c:
-        make_board(board)
-        if counter % 2 == 0:
-            take_item("X")
-        else:
-            take_item("O")
-        counter += 1
-        if counter > 4:
-            t = check(board)
-            if t:
-                print(t, "выиграл!")
-                win = True
-                break
-        if counter == 9:
-            print("Ничья!")
-            break
-    make_board(board)
-
-
-main_def(board)
+            print("Мимо!")
+            board[guess_row][guess_col] = "X" #если не попал по кораблю ствлю Х
+    if turn == 9:
+        print("Игра окончена! Я уплываю в закат!") # конец игры
+    #turn =+ 1
+    print_board(board)
